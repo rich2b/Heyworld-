@@ -1,0 +1,462 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#081525">
+<title>HeyWorld — Connect Beyond Borders</title>
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<style>
+:root {
+  --bg:#081525;
+  --panel:#11243a;
+  --panel2:#172e47;
+  --text:#f3f7ff;
+  --muted:#a9bbd0;
+  --blue:#42a5ff;
+  --green:#49d6a1;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+}
+header {
+  padding:18px 16px;
+  border-bottom:1px solid #263a50;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.brand { font-size:23px;font-weight:bold; }
+.brand span { color:var(--blue); }
+.tagline { color:var(--muted);font-size:12px;margin-top:5px; }
+main { padding:16px 14px 100px;max-width:700px;margin:auto; }
+.screen { display:none; }
+.screen.active { display:block; }
+h1 { font-size:27px;margin:8px 0 10px; }
+h2 { font-size:20px; }
+p { line-height:1.5; }
+.muted { color:var(--muted); }
+.card {
+  background:var(--panel);
+  border:1px solid #263c54;
+  border-radius:17px;
+  padding:16px;
+  margin:14px 0;
+}
+.hero {
+  background:linear-gradient(145deg,#153d61,#10243b 65%);
+  text-align:center;
+  padding:28px 18px;
+}
+.earth { font-size:76px;margin:8px; }
+button,input,textarea { font:inherit; }
+button {
+  border:0;
+  border-radius:12px;
+  padding:12px 15px;
+  background:var(--blue);
+  color:#061526;
+  font-weight:bold;
+  cursor:pointer;
+}
+button.secondary {
+  background:var(--panel2);
+  color:var(--text);
+  border:1px solid #38516b;
+}
+button.danger { background:#612d39;color:white; }
+button:active { opacity:.8; }
+.actions { display:flex;gap:8px;flex-wrap:wrap;margin-top:14px; }
+input,textarea {
+  width:100%;
+  padding:13px;
+  margin:7px 0 12px;
+  border-radius:10px;
+  border:1px solid #354b62;
+  background:#091a2c;
+  color:white;
+}
+textarea { min-height:90px;resize:vertical; }
+label { color:var(--muted);font-size:14px; }
+.pill {
+  display:inline-block;
+  background:#173e50;
+  color:var(--green);
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+}
+.friend {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.avatar {
+  width:45px;height:45px;border-radius:50%;
+  background:#244d70;
+  display:grid;place-items:center;
+  font-size:22px;flex-shrink:0;
+}
+.friend-info { flex:1; }
+.friend-info p { margin:5px 0;color:var(--muted);font-size:13px; }
+#map {
+  width:100%;
+  height:340px;
+  border-radius:14px;
+  background:#142c42;
+  z-index:1;
+}
+.notice {
+  color:var(--muted);
+  background:#0b1b2c;
+  border-radius:10px;
+  padding:12px;
+  font-size:13px;
+  line-height:1.5;
+}
+#status { color:var(--green);font-size:14px;line-height:1.5; }
+.bottom-nav {
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:#0b1b2c;
+  border-top:1px solid #304257;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  padding:8px 3px calc(8px + env(safe-area-inset-bottom));
+  z-index:1000;
+}
+.nav-btn {
+  background:transparent;
+  color:var(--muted);
+  padding:7px 1px;
+  border-radius:9px;
+  font-size:11px;
+  font-weight:normal;
+}
+.nav-btn .ico { display:block;font-size:20px;margin-bottom:4px; }
+.nav-btn.active { color:var(--blue);background:#152d45; }
+footer { text-align:center;color:var(--muted);font-size:12px;padding:20px; }
+</style>
+</head>
+
+<body>
+<header>
+  <div>
+    <div class="brand">🌍 Hey<span>World</span></div>
+    <div class="tagline">Connect beyond borders.</div>
+  </div>
+  <span class="pill">PROTOTYPE</span>
+</header>
+
+<main>
+  <section id="home" class="screen active">
+    <div class="card hero">
+      <div class="earth">🌍</div>
+      <h1>Your world. Your people.</h1>
+      <p class="muted">Connect with friends, discover the world and keep your family close.</p>
+      <div class="actions" style="justify-content:center">
+        <button onclick="showScreen('world')">Explore the World</button>
+        <button class="secondary" onclick="showScreen('safety')">Family Safety</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Welcome to HeyWorld</h2>
+      <p class="muted">A new way to connect people across the world.</p>
+    </div>
+    <div class="card">
+      <h2>🌐 Discover</h2>
+      <p class="muted">Explore places and see the world map.</p>
+      <button class="secondary" onclick="showScreen('world')">Open World Map</button>
+    </div>
+    <div class="card">
+      <h2>🛡️ Stay connected</h2>
+      <p class="muted">Explore our family safety prototype.</p>
+      <button class="secondary" onclick="showScreen('safety')">Open Safety</button>
+    </div>
+  </section>
+
+  <section id="world" class="screen">
+    <h1>Explore the World 🌍</h1>
+    <p class="muted">Explore the map and example locations.</p>
+    <div class="card">
+      <div id="map"></div>
+      <p id="map-info" class="muted">Example locations are shown on the map.</p>
+    </div>
+    <div class="notice">Map data requires an internet connection. Example markers are not real-time friend locations.</div>
+  </section>
+
+  <section id="friends" class="screen">
+    <h1>Your Friends</h1>
+    <p class="muted">Sample profiles for the prototype.</p>
+    <div class="card friend">
+      <div class="avatar">👩🏽</div>
+      <div class="friend-info"><strong>Amara</strong><p>Lagos, Nigeria · Sample profile</p></div>
+      <span class="pill">Demo</span>
+    </div>
+    <div class="card friend">
+      <div class="avatar">👨🏾</div>
+      <div class="friend-info"><strong>David</strong><p>Abuja, Nigeria · Sample profile</p></div>
+      <span class="pill">Demo</span>
+    </div>
+    <div class="card friend">
+      <div class="avatar">👩🏻</div>
+      <div class="friend-info"><strong>Sophia</strong><p>London, UK · Sample profile</p></div>
+      <span class="pill">Demo</span>
+    </div>
+    <div class="notice">Real accounts, contact syncing and friend requests are not connected yet.</div>
+  </section>
+
+  <section id="messages" class="screen">
+    <h1>Messages 💬</h1>
+    <p class="muted">Try the demo conversation below.</p>
+    <div class="card">
+      <strong>HeyWorld Demo Chat</strong>
+      <div id="chat" class="notice" style="margin:14px 0">
+        <p><strong>Amara:</strong> Welcome to HeyWorld! 👋</p>
+      </div>
+      <label for="message">Write a message</label>
+      <textarea id="message" placeholder="Type your message..."></textarea>
+      <button onclick="sendMessage()">Send Demo Message</button>
+      <p class="muted">Demo messages stay in this page and are not sent to another person.</p>
+    </div>
+  </section>
+
+  <section id="safety" class="screen">
+    <h1>Family Safety 🛡️</h1>
+    <p class="muted">Your family. Your choice. Your privacy.</p>
+    <div class="card">
+      <span class="pill">PRIVATE PREVIEW</span>
+      <h2>Preview My Location</h2>
+      <p class="muted">Allow your browser to access your location to test this feature on your device.</p>
+      <div class="actions">
+        <button onclick="previewLocation()">📍 Preview My Location</button>
+        <button class="secondary" onclick="stopLocation()">Stop Preview</button>
+      </div>
+      <p id="status" aria-live="polite">Location preview is stopped.</p>
+      <p id="coordinates" class="muted"></p>
+    </div>
+    <div class="card">
+      <h2>🔒 Your privacy matters</h2>
+      <p class="muted">This preview does not send your location to friends or family. Nothing is being tracked by another person.</p>
+    </div>
+    <div class="card">
+      <h2>Coming next</h2>
+      <p class="muted">With further development, HeyWorld can add consent-based family sharing, trusted contacts and sharing controls.</p>
+    </div>
+  </section>
+
+  <section id="posts" class="screen">
+    <h1>Community Posts</h1>
+    <p class="muted">Create a local demo post.</p>
+    <div class="card">
+      <label for="post-text">What would you like to share?</label>
+      <textarea id="post-text" placeholder="Write something..."></textarea>
+      <button onclick="addPost()">Publish Demo Post</button>
+    </div>
+    <div id="post-list"></div>
+    <p class="muted">Demo posts are not published online for other users.</p>
+  </section>
+</main>
+
+<footer>HeyWorld · Built one step at a time 🌍</footer>
+
+<nav class="bottom-nav" aria-label="Main navigation">
+  <button class="nav-btn active" data-screen="home" onclick="showScreen('home')"><span class="ico">⌂</span>Home</button>
+  <button class="nav-btn" data-screen="world" onclick="showScreen('world')"><span class="ico">🌍</span>World</button>
+  <button class="nav-btn" data-screen="friends" onclick="showScreen('friends')"><span class="ico">♧</span>Friends</button>
+  <button class="nav-btn" data-screen="messages" onclick="showScreen('messages')"><span class="ico">💬</span>Messages</button>
+  <button class="nav-btn" data-screen="safety" onclick="showScreen('safety')"><span class="ico">🛡️</span>Safety</button>
+</nav>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+let map = null;
+let myMarker = null;
+let watchId = null;
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(screen) {
+    screen.classList.remove('active');
+  });
+
+  const target = document.getElementById(id);
+  if (!target) return;
+
+  target.classList.add('active');
+
+  document.querySelectorAll('.nav-btn').forEach(function(button) {
+    button.classList.toggle('active', button.dataset.screen === id);
+  });
+
+  if (id === 'world') {
+    setTimeout(initMap, 150);
+  }
+
+  window.scrollTo(0, 0);
+}
+
+function initMap() {
+  const mapElement = document.getElementById('map');
+  if (!mapElement || !window.L) {
+    document.getElementById('map-info').textContent =
+      'The map could not load. Check your internet connection and refresh.';
+    return;
+  }
+
+  if (!map) {
+    map = L.map('map').setView([10, 8], 3);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 19
+    }).addTo(map);
+
+    L.marker([6.5244, 3.3792]).addTo(map).bindPopup('Lagos, Nigeria');
+    L.marker([9.0765, 7.3986]).addTo(map).bindPopup('Abuja, Nigeria');
+    L.marker([51.5072, -0.1276]).addTo(map).bindPopup('London, UK');
+    L.marker([40.7128, -74.0060]).addTo(map).bindPopup('New York, USA');
+  }
+
+  setTimeout(function() {
+    map.invalidateSize();
+  }, 200);
+}
+
+function previewLocation() {
+  const status = document.getElementById('status');
+  const coordinates = document.getElementById('coordinates');
+
+  if (!navigator.geolocation) {
+    status.textContent = 'Location is not supported by this browser.';
+    return;
+  }
+
+  status.textContent = 'Requesting location permission...';
+  coordinates.textContent = '';
+
+  navigator.geolocation.getCurrentPosition(
+    function(position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      coordinates.textContent =
+        'Latitude: ' + lat.toFixed(5) + ' · Longitude: ' + lng.toFixed(5);
+
+      status.textContent =
+        'Location preview successful. Your location is not being shared.';
+
+      if (window.L) {
+        showScreen('world');
+        initMap();
+
+        if (map) {
+          if (myMarker) map.removeLayer(myMarker);
+
+          myMarker = L.marker([lat, lng])
+            .addTo(map)
+            .bindPopup('Your location — private preview')
+            .openPopup();
+
+          map.setView([lat, lng], 14);
+
+          document.getElementById('map-info').textContent =
+            'Your private location preview is shown on this device only.';
+        }
+      }
+    },
+    function(error) {
+      if (error.code === 1) {
+        status.textContent =
+          'Permission denied. Allow location access in your browser settings and try again.';
+      } else if (error.code === 2) {
+        status.textContent =
+          'Your location could not be found. Check that phone Location is turned on.';
+      } else {
+        status.textContent =
+          'Location request timed out. Check your connection and try again.';
+      }
+    },
+    { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+  );
+}
+
+function stopLocation() {
+  if (watchId !== null && navigator.geolocation) {
+    navigator.geolocation.clearWatch(watchId);
+    watchId = null;
+  }
+
+  if (myMarker && map) {
+    map.removeLayer(myMarker);
+    myMarker = null;
+  }
+
+  document.getElementById('status').textContent =
+    'Location preview stopped.';
+  document.getElementById('coordinates').textContent = '';
+  document.getElementById('map-info').textContent =
+    'Example locations are shown on the map.';
+}
+
+function sendMessage() {
+  const input = document.getElementById('message');
+  const text = input.value.trim();
+
+  if (!text) {
+    alert('Please type a message first.');
+    return;
+  }
+
+  const bubble = document.createElement('p');
+  const label = document.createElement('strong');
+  label.textContent = 'You: ';
+  bubble.appendChild(label);
+  bubble.appendChild(document.createTextNode(text));
+
+  document.getElementById('chat').appendChild(bubble);
+  input.value = '';
+}
+
+function addPost() {
+  const input = document.getElementById('post-text');
+  const text = input.value.trim();
+
+  if (!text) {
+    alert('Please write something first.');
+    return;
+  }
+
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const heading = document.createElement('strong');
+  heading.textContent = 'Your demo post';
+
+  const paragraph = document.createElement('p');
+  paragraph.textContent = text;
+
+  card.appendChild(heading);
+  card.appendChild(paragraph);
+
+  document.getElementById('post-list').prepend(card);
+  input.value = '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.nav-btn').forEach(function(button) {
+    button.addEventListener('click', function() {
+      showScreen(button.dataset.screen);
+    });
+  });
+});
+</script>
+</body>
+</html>
