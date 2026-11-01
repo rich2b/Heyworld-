@@ -458,5 +458,22 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+  
+<!-- HEYWORLD SUPABASE CONNECTION -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_V8IIsGwlzQy5qwxtW7J8eA_W32O3xWE';
+
+window.heyworldDB = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+console.log('HeyWorld database connection initialized!');
+</script>
+  
 </body>
 </html>
