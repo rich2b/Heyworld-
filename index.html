@@ -474,6 +474,21 @@ window.heyworldDB = window.supabase.createClient(
 
 console.log('HeyWorld database connection initialized!');
 </script>
-  
+  <script>
+async function testHeyWorldConnection() {
+  const { data, error } = await window.heyworldDB
+    .from('test_connection')
+    .select('*')
+    .limit(1);
+
+  if (error) {
+    alert('Connection failed: ' + error.message);
+  } else {
+    alert('HeyWorld is successfully connected to Supabase!');
+  }
+}
+
+testHeyWorldConnection();
+  </script>
 </body>
 </html>
