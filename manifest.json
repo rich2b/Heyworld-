@@ -1,0 +1,11 @@
+{
+  "name": "HeyWorld",
+  "short_name": "HeyWorld",
+  "description": "Family safety and global connections.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#071426",
+  "theme_color": "#071426"
+}
