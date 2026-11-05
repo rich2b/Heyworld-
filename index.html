@@ -149,6 +149,7 @@ footer { text-align:center;color:var(--muted);font-size:12px;padding:20px; }
 </head>
 
 <body>
+  
 <header>
   <div>
     <div class="brand">🌍 Hey<span>World</span></div>
@@ -490,6 +491,15 @@ async function testHeyWorldConnection() {
 }
 
 testHeyWorldConnection();
+  </script>
+  <script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .then(() => console.log("HeyWorld is ready!"))
+      .catch(error => console.error("Service worker error:", error));
+  });
+}
   </script>
 </body>
 </html>
